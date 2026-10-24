@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostelHub – Smart Hostel Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+/* HostelHub – Direct-open website styles */
+:root {
+  --navy: #0a1628;
+  --navy-2: #0f1c2e;
+  --blue: #2563eb;
+  --blue-light: #3b82f6;
+  --cyan: #06b6d4;
+  --bg: #f8fafc;
+  --card: #fff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; }
+button, input, select, textarea { font: inherit; }
+input, select, textarea {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: 12px; background: #fff; margin-top: 4px;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--blue-light); outline-offset: 1px; border-color: var(--blue);
+}
+label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 12px; color: #334155; }
+code { background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+
+/* Pages */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+.dashboard-page.active { display: flex; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+.container.narrow { max-width: 720px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 18px; border-radius: 12px; border: none; font-weight: 600;
+  font-size: 0.875rem; cursor: pointer; transition: 0.15s;
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+.btn-outline-light { background: transparent; border: 2px solid rgba(255,255,255,0.35); color: #fff; }
+.btn-outline { background: #fff; border: 2px solid var(--blue); color: var(--blue); }
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-white { background: #fff; color: var(--blue); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; }
+.btn-lg { padding: 14px 24px; font-size: 1rem; }
+.btn-block { width: 100%; }
+.link-btn { background: none; border: none; color: var(--blue); cursor: pointer; font-weight: 600; font-size: 0.8rem; padding: 0; }
+
+/* Nav */
+.nav { position: sticky; top: 0; z-index: 50; }
+.nav-dark { background: rgba(10,22,40,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-light { background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border); }
+.nav-inner { max-width: 1120px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.15rem; text-decoration: none !important; }
+.logo-icon { font-size: 1.4rem; }
+.nav-dark .logo-text { background: linear-gradient(90deg, #60a5fa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-light .logo-text { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-links { display: flex; gap: 8px; }
+.nav-links a { color: #cbd5e1; padding: 8px 12px; border-radius: 8px; font-size: 0.875rem; font-weight: 500; text-decoration: none; }
+.nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-actions { display: flex; gap: 8px; }
+.nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
+
+/* Hero */
+.hero { position: relative; background: linear-gradient(160deg, #0a1628 0%, #0f1c2e 40%, #1a2d4a 100%); color: #fff; padding: 80px 0 100px; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(37,99,235,0.25), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(6,182,212,0.2), transparent);
+}
+.hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.badge-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; color: #67e8f9; margin-bottom: 16px; }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.15; font-weight: 700; margin-bottom: 16px; }
+.gradient-text { background: linear-gradient(90deg, #67e8f9, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: #94a3b8; font-size: 1.1rem; max-width: 480px; margin-bottom: 24px; }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.preview-card {
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 20px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+.preview-dots { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+.preview-dots span { width: 10px; height: 10px; border-radius: 50%; background: #f87171; }
+.preview-dots span:nth-child(2) { background: #fbbf24; }
+.preview-dots span:nth-child(3) { background: #34d399; }
+.preview-label { margin-left: 8px; font-size: 0.7rem; color: #94a3b8; background: transparent !important; width: auto !important; height: auto !important; border-radius: 0 !important; }
+.preview-welcome { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.preview-welcome strong { display: block; }
+.preview-welcome small { color: #94a3b8; }
+.preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.preview-stats div { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px; text-align: center; }
+.preview-stats b { display: block; font-size: 1.2rem; }
+.preview-stats span { font-size: 0.65rem; color: #94a3b8; }
+.preview-row { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px; }
+.c-amber { color: #fbbf24; } .c-green { color: #34d399; } .c-cyan { color: #22d3ee; } .c-red { color: #fb7185; }
+
+/* Sections */
+.section { padding: 72px 0; }
+.section-alt { background: #fff; }
+.section-title { text-align: center; font-size: 1.75rem; margin-bottom: 8px; }
+.section-sub { text-align: center; color: var(--muted); max-width: 560px; margin: 0 auto 40px; }
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.cards-grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow);
+}
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,0.12); transition: 0.2s; }
+.service-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 14px; color: #fff; }
+.bg-blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+.bg-green { background: linear-gradient(135deg, #10b981, #14b8a6); }
+.bg-amber { background: linear-gradient(135deg, #f59e0b, #f97316); }
+.bg-purple { background: linear-gradient(135deg, #a855f7, #ec4899); }
+.bg-rose { background: linear-gradient(135deg, #f43f5e, #ef4444); }
+.service-card h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.service-card p { font-size: 0.875rem; color: var(--muted); }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+.step span { font-size: 2rem; font-weight: 700; color: #dbeafe; display: block; }
+.step h3 { margin: 8px 0 4px; }
+.step p { font-size: 0.875rem; color: var(--muted); }
+
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 800px; margin: 0 auto; }
+.compare-bad { border-color: #fecaca; }
+.compare-good { border-color: #a7f3d0; }
+.compare ul { list-style: none; margin-top: 12px; }
+.compare li { font-size: 0.9rem; color: var(--muted); margin-bottom: 10px; }
+
+.cta { background: linear-gradient(135deg, var(--blue), var(--cyan)); color: #fff; text-align: center; padding: 64px 20px; }
+.cta h2 { font-size: 1.75rem; margin-bottom: 8px; }
+.cta p { opacity: 0.9; margin-bottom: 24px; }
+
+.footer { background: var(--navy); color: #94a3b8; padding: 48px 0 0; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 32px; }
+.footer h4 { color: #fff; margin-bottom: 12px; font-size: 0.9rem; }
+.footer a { display: block; color: #94a3b8; font-size: 0.875rem; margin-bottom: 6px; text-decoration: none; }
+.footer a:hover { color: var(--cyan); }
+.footer-tag { font-size: 0.85rem; margin-top: 8px; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding: 16px 20px; text-align: center; font-size: 0.75rem; color: #64748b; }
+
+/* Auth */
+.auth-wrap { display: flex; align-items: center; justify-content: center; padding: 40px 20px; min-height: calc(100vh - 60px); }
+.auth-card { width: 100%; max-width: 420px; }
+.auth-card h1 { font-size: 1.5rem; margin-bottom: 4px; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.tiny { font-size: 0.75rem; }
+.demo-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px; margin: 16px 0; font-size: 0.85rem; color: #92400e; }
+.demo-box strong { display: block; margin-bottom: 4px; }
+.auth-footer { text-align: center; margin-top: 20px; font-size: 0.875rem; color: var(--muted); }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Dashboard */
+.dashboard-page { background: var(--bg); }
+.sidebar {
+  width: 260px; background: #fff; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 40;
+  transition: transform 0.2s;
+}
+.sidebar-brand { padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.demo-badge { font-size: 0.65rem; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 999px; font-weight: 700; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 12px; }
+.side-link {
+  display: block; padding: 10px 14px; border-radius: 10px; color: #475569; font-size: 0.875rem;
+  font-weight: 500; text-decoration: none !important; margin-bottom: 2px;
+}
+.side-link:hover { background: #f1f5f9; }
+.side-link.active { background: #eff6ff; color: var(--blue); }
+.sidebar-user { padding: 16px; border-top: 1px solid var(--border); font-size: 0.875rem; }
+.sidebar-user .btn { margin-top: 10px; }
+
+.dash-main { margin-left: 260px; flex: 1; min-width: 0; }
+.dash-top { background: #fff; border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-weight: 600; position: sticky; top: 0; z-index: 30; }
+.sidebar-open { display: none; }
+.dash-content { padding: 24px; max-width: 1000px; }
+.dash-view { display: none; }
+.dash-view.active { display: block; }
+.dash-content h1 { font-size: 1.5rem; margin-bottom: 4px; }
+
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
+.stat-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+.stat-card .icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.stat-card b { font-size: 1.4rem; display: block; }
+.stat-card span { font-size: 0.75rem; color: var(--muted); }
+
+.row-2-dash { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th { text-align: left; font-size: 0.75rem; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+.badge-received { background: #f1f5f9; color: #475569; }
+.badge-assigned { background: #dbeafe; color: #1d4ed8; }
+.badge-progress { background: #fef3c7; color: #b45309; }
+.badge-resolved { background: #d1fae5; color: #047857; }
+.badge-cancelled { background: #f1f5f9; color: #94a3b8; }
+.badge-normal { background: #dbeafe; color: #1d4ed8; }
+.badge-high { background: #ffedd5; color: #c2410c; }
+.badge-urgent { background: #fee2e2; color: #b91c1c; }
+.badge-warn { background: #fef3c7; color: #b45309; }
+.badge-ok { background: #d1fae5; color: #047857; }
+.badge-no { background: #fee2e2; color: #b91c1c; }
+
+.filters { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.filters input, .filters select { max-width: 220px; margin: 0; }
+
+.timeline { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
+.timeline::before { content: ""; position: absolute; top: 14px; left: 0; right: 0; height: 2px; background: var(--border); }
+.tl-step { position: relative; z-index: 1; text-align: center; flex: 1; }
+.tl-dot { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 2px solid var(--border); margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--muted); }
+.tl-dot.done { background: var(--blue); border-color: var(--blue); color: #fff; }
+.tl-label { font-size: 0.65rem; color: var(--muted); }
+.card-warn { background: #fffbeb; border-color: #fde68a; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: #fff;
+  padding: 14px 20px; border-radius: 12px; font-size: 0.875rem; z-index: 100;
+  transform: translateY(100px); opacity: 0; transition: 0.3s; max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: #047857; }
+.toast.error { background: #b91c1c; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-preview { display: none; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .compare { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .row-2-dash { grid-template-columns: 1fr; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .dash-main { margin-left: 0; }
+  .sidebar-open { display: inline-flex; }
+  .nav-links, .nav-actions { display: none; }
+  .nav-toggle { display: block; }
+}
+@media (max-width: 500px) {
+  .steps { grid-template-columns: 1fr; }
+  .row-2 { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+  <!-- ========== LANDING ========== -->
+  <div id="page-landing" class="page active">
+    <header class="nav nav-dark">
+      <div class="nav-inner">
+        <a href="#" class="logo" onclick="showPage('landing')">
+          <span class="logo-icon">🏠</span>
+          <span class="logo-text">HostelHub</span>
+        </a>
+        <nav class="nav-links" id="nav-links">
+          <a href="#services">Services</a>
+          <a href="#about">About</a>
+          <a href="#" onclick="showPage('contact')">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="btn btn-outline-light" onclick="showPage('login')">Login</button>
+          <button class="btn btn-primary" onclick="showPage('signup')">Get Started</button>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <span class="badge-pill">Smart Hostel Management Platform</span>
+          <h1>Your Hostel Life,<br /><span class="gradient-text">Simplified.</span></h1>
+          <p>Report cleanliness issues, explore today's mess menu, review your meals and find important hostel information — all from one simple dashboard.</p>
+          <div class="hero-btns">
+            <button class="btn btn-primary btn-lg" onclick="showPage('signup')">Get Started →</button>
+            <button class="btn btn-outline-light btn-lg" onclick="showPage('login')">Explore HostelHub</button>
+          </div>
+        </div>
+        <div class="hero-preview">
+          <div class="preview-card">
+            <div class="preview-dots"><span></span><span></span><span></span><span class="preview-label">Student Dashboard</span></div>
+            <div class="preview-welcome">
+              <strong>Welcome back, Aarav!</strong>
+              <small>Block A · Room 204</small>
+            </div>
+            <div class="preview-stats">
+              <div><b class="c-amber">2</b><span>Pending</span></div>
+              <div><b class="c-green">1</b><span>Resolved</span></div>
+              <div><b class="c-cyan">4.0</b><span>Avg Rating</span></div>
+              <div><b class="c-red">1</b><span>Alerts</span></div>
+            </div>
+            <div class="preview-row">📋 HH-CMP-1002 · Drinking Water · Urgent</div>
+            <div class="preview-row">🔔 Mess menu updated for today</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="container">
+        <h2 class="section-title">Hostel Services</h2>
+        <p class="section-sub">Everything students need for a cleaner, better-informed hostel experience.</p>
+        <div class="cards-grid">
+          <div class="card service-card">
+            <div class="service-icon bg-blue">✨</div>
+            <h3>Cleanliness Management</h3>
+            <p>Report washroom, corridor, room and common-area issues with priority and tracking.</p>
+          </div>
+          <div class="card service-card">
+            <div class="service-icon bg-green">🍽️</div>
+            <h3>Daily Mess Menu</h3>
+            <p>View today's and weekly mess menus with meal timings and last-updated information.</p>
+          </div>
+          <div class="card service-card">
+            <div class="service-icon bg-amber">⭐</div>
+            <h3>Food Reviews</h3>
+            <p>Rate meals, write feedback and help improve mess quality with real ratings.</p>
+          </div>
+          <div class="card service-card">
+            <div class="service-icon bg-purple">🏪</div>
+            <h3>Canteen Information</h3>
+            <p>Browse canteen items, prices and availability — information only, no ordering.</p>
+          </div>
+          <div class="card service-card">
+            <div class="service-icon bg-rose">👤</div>
+            <h3>Rector & Hostel Support</h3>
+            <p>Find rector contact, office hours, hostel rules and important announcements.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">How HostelHub Works</h2>
+        <div class="steps">
+          <div class="step"><span>01</span><h3>Sign in</h3><p>Create an account or login with your student details.</p></div>
+          <div class="step"><span>02</span><h3>Select a service</h3><p>Choose cleanliness, mess, canteen or hostel info.</p></div>
+          <div class="step"><span>03</span><h3>Submit or view</h3><p>File a complaint, check menu or read announcements.</p></div>
+          <div class="step"><span>04</span><h3>Track updates</h3><p>Follow complaint status and receive notifications.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Why HostelHub?</h2>
+        <p class="section-sub">Hostel information is often scattered. HostelHub organises it into one portal.</p>
+        <div class="compare">
+          <div class="card compare-bad">
+            <h3>Without HostelHub</h3>
+            <ul>
+              <li>✕ Complaints lost in WhatsApp chats</li>
+              <li>✕ Mess menu only on physical boards</li>
+              <li>✕ No tracking of complaint status</li>
+              <li>✕ Canteen prices change without notice</li>
+              <li>✕ Rector contact hard to find</li>
+            </ul>
+          </div>
+          <div class="card compare-good">
+            <h3>With HostelHub</h3>
+            <ul>
+              <li>✓ Trackable digital complaints with IDs</li>
+              <li>✓ Always-updated digital mess menu</li>
+              <li>✓ Status timeline for every request</li>
+              <li>✓ Live canteen availability & prices</li>
+              <li>✓ Rector info & rules in one place</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to simplify your hostel life?</h2>
+        <p>Built as a Product Ideation project for college demonstration.</p>
+        <button class="btn btn-white btn-lg" onclick="showPage('signup')">Get Started Free →</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="logo"><span class="logo-icon">🏠</span><span class="logo-text">HostelHub</span></div>
+          <p class="footer-tag">Clean Hostel. Better Food. Quick Support.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <a href="#" onclick="showPage('landing')">Home</a>
+          <a href="#" onclick="showPage('login')">Login</a>
+          <a href="#" onclick="showPage('signup')">Sign Up</a>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <p>Cleanliness · Mess Menu · Food Reviews · Canteen · Rector</p>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <p>support@hostelhub.demo<br />Campus Extension (Demo)</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 HostelHub · Product Ideation Project · Demo for educational use · Not affiliated with any real college</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========== LOGIN ========== -->
+  <div id="page-login" class="page">
+    <header class="nav nav-light">
+      <div class="nav-inner">
+        <a href="#" class="logo" onclick="showPage('landing')"><span class="logo-icon">🏠</span><span class="logo-text">HostelHub</span></a>
+        <button class="btn btn-ghost" onclick="showPage('landing')">← Back</button>
+      </div>
+    </header>
+    <div class="auth-wrap">
+      <div class="card auth-card">
+        <h1>Welcome back</h1>
+        <p class="muted">Sign in to your HostelHub account</p>
+        <div class="demo-box">
+          <strong>⚠ DEMO MODE</strong>
+          <p>Data saved in browser localStorage. Not production auth.</p>
+          <p>
+            <button type="button" class="link-btn" onclick="fillDemo('student')">Fill Student</button> ·
+            <button type="button" class="link-btn" onclick="fillDemo('admin')">Fill Admin</button>
+          </p>
+          <p class="tiny">Password: <code>demo1234</code></p>
+        </div>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <label>Email<input type="email" id="login-email" required placeholder="student@demo.hostelhub" /></label>
+          <label>Password<input type="password" id="login-password" required placeholder="••••••••" /></label>
+          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+        <p class="auth-footer">No account? <a href="#" onclick="showPage('signup')">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SIGNUP ========== -->
+  <div id="page-signup" class="page">
+    <header class="nav nav-light">
+      <div class="nav-inner">
+        <a href="#" class="logo" onclick="showPage('landing')"><span class="logo-icon">🏠</span><span class="logo-text">HostelHub</span></a>
+        <button class="btn btn-ghost" onclick="showPage('landing')">← Back</button>
+      </div>
+    </header>
+    <div class="auth-wrap">
+      <div class="card auth-card">
+        <h1>Create Account</h1>
+        <p class="muted">Join HostelHub as a student</p>
+        <form id="signup-form" onsubmit="handleSignup(event)">
+          <label>Full Name<input type="text" id="su-name" required placeholder="Aarav Patel" /></label>
+          <label>Email<input type="email" id="su-email" required placeholder="you@college.edu" /></label>
+          <div class="row-2">
+            <label>Password<input type="password" id="su-pass" required minlength="6" /></label>
+            <label>Confirm<input type="password" id="su-confirm" required /></label>
+          </div>
+          <div class="row-2">
+            <label>Hostel Block
+              <select id="su-block" required>
+                <option value="">Select</option>
+                <option>Block A</option><option>Block B</option><option>Block C</option><option>Block D</option>
+              </select>
+            </label>
+            <label>Room Number<input type="text" id="su-room" required placeholder="204" /></label>
+          </div>
+          <label>Enrollment Number<input type="text" id="su-enroll" required placeholder="CE2024-1042" /></label>
+          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+        <p class="auth-footer">Have an account? <a href="#" onclick="showPage('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CONTACT ========== -->
+  <div id="page-contact" class="page">
+    <header class="nav nav-light">
+      <div class="nav-inner">
+        <a href="#" class="logo" onclick="showPage('landing')"><span class="logo-icon">🏠</span><span class="logo-text">HostelHub</span></a>
+        <button class="btn btn-ghost" onclick="showPage('landing')">← Back</button>
+      </div>
+    </header>
+    <div class="section">
+      <div class="container narrow">
+        <h1>Contact Support</h1>
+        <p class="muted">Placeholder details for this college project demo.</p>
+        <div class="cards-grid-2">
+          <div class="card"><strong>📧 Email</strong><p>support@hostelhub.demo</p></div>
+          <div class="card"><strong>📞 Phone</strong><p>Campus Extension (Demo)</p></div>
+          <div class="card"><strong>📍 Office</strong><p>Hostel Administrative Block</p></div>
+          <div class="card"><strong>🕐 Hours</strong><p>Mon–Fri 10:00 AM – 5:00 PM</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== STUDENT DASHBOARD ========== -->
+  <div id="page-dashboard" class="page dashboard-page">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-icon">🏠</span> HostelHub
+        <span class="demo-badge">DEMO</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="side-link active" data-view="overview" onclick="showDashView('overview', this)">📊 Overview</a>
+        <a href="#" class="side-link" data-view="cleanliness" onclick="showDashView('cleanliness', this)">✨ Cleanliness</a>
+        <a href="#" class="side-link" data-view="complaints" onclick="showDashView('complaints', this)">📋 My Complaints</a>
+        <a href="#" class="side-link" data-view="mess" onclick="showDashView('mess', this)">🍽️ Mess Menu</a>
+        <a href="#" class="side-link" data-view="reviews" onclick="showDashView('reviews', this)">⭐ Food Reviews</a>
+        <a href="#" class="side-link" data-view="canteen" onclick="showDashView('canteen', this)">🏪 Canteen</a>
+        <a href="#" class="side-link" data-view="rector" onclick="showDashView('rector', this)">👤 Rector & Info</a>
+        <a href="#" class="side-link" data-view="notifications" onclick="showDashView('notifications', this)">🔔 Notifications</a>
+        <a href="#" class="side-link" data-view="profile" onclick="showDashView('profile', this)">👤 My Profile</a>
+      </nav>
+      <div class="sidebar-user">
+        <div id="dash-user-name">Student</div>
+        <div id="dash-user-email" class="tiny muted"></div>
+        <button class="btn btn-danger btn-sm btn-block" onclick="handleLogout()">Logout</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <header class="dash-top">
+        <button class="btn btn-ghost sidebar-open" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <span id="dash-title">Overview</span>
+      </header>
+      <div class="dash-content">
+        <!-- Overview -->
+        <div id="view-overview" class="dash-view active">
+          <h1 id="welcome-msg">Welcome back!</h1>
+          <p class="muted" id="welcome-sub"></p>
+          <div class="stats-row" id="stats-row"></div>
+          <div class="row-2-dash">
+            <div class="card">
+              <h3>Today's Mess Menu</h3>
+              <div id="today-menu"></div>
+            </div>
+            <div class="card">
+              <h3>Announcements</h3>
+              <div id="announcements-list"></div>
+              <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="showDashView('cleanliness')">+ Quick Complaint</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h3>Recent Complaints</h3>
+            <div id="recent-complaints" class="table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Cleanliness form -->
+        <div id="view-cleanliness" class="dash-view">
+          <h1>Report Cleanliness Issue</h1>
+          <div class="card" style="max-width:560px">
+            <form id="complaint-form" onsubmit="submitComplaint(event)">
+              <label>Category
+                <select id="c-cat" required>
+                  <option>Washroom</option><option>Room</option><option>Corridor</option>
+                  <option>Drinking Water</option><option>Waste Management</option>
+                  <option>Common Area</option><option>Other</option>
+                </select>
+              </label>
+              <div class="row-2">
+                <label>Hostel Block
+                  <select id="c-block" required>
+                    <option>Block A</option><option>Block B</option><option>Block C</option><option>Block D</option>
+                  </select>
+                </label>
+                <label>Room / Area<input type="text" id="c-room" required placeholder="204 or 2nd Floor" /></label>
+              </div>
+              <label>Location<input type="text" id="c-loc" required placeholder="e.g. Common washroom near room 204" /></label>
+              <label>Description<textarea id="c-desc" required minlength="10" rows="3" placeholder="Describe the issue clearly..."></textarea></label>
+              <label>Priority
+                <select id="c-pri">
+                  <option>Normal</option><option>High</option><option>Urgent</option>
+                </select>
+              </label>
+              <p class="tiny muted" id="urgent-note" style="display:none;color:#b91c1c">
+                Urgent: This website does not replace official emergency procedures. Contact campus security for real emergencies.
+              </p>
+              <button type="submit" class="btn btn-primary">Submit Complaint</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- My Complaints -->
+        <div id="view-complaints" class="dash-view">
+          <h1>My Complaints</h1>
+          <div class="filters">
+            <input type="search" id="c-search" placeholder="Search by ID, category..." oninput="renderComplaints()" />
+            <select id="c-filter-status" onchange="renderComplaints()">
+              <option value="">All Statuses</option>
+              <option>Received</option><option>Assigned</option><option>In Progress</option><option>Resolved</option><option>Cancelled</option>
+            </select>
+          </div>
+          <div class="card table-wrap" id="complaints-table"></div>
+        </div>
+
+        <!-- Complaint detail -->
+        <div id="view-complaint-detail" class="dash-view">
+          <button class="btn btn-ghost btn-sm" onclick="showDashView('complaints')">← Back</button>
+          <div id="complaint-detail-body"></div>
+        </div>
+
+        <!-- Mess -->
+        <div id="view-mess" class="dash-view">
+          <h1>Mess Menu</h1>
+          <p class="muted">Sample / demo menus. Updated by administration.</p>
+          <div id="mess-list" class="cards-grid"></div>
+        </div>
+
+        <!-- Reviews -->
+        <div id="view-reviews" class="dash-view">
+          <h1>Food Reviews</h1>
+          <div class="card" style="max-width:480px;margin-bottom:16px">
+            <h3>Submit a Review</h3>
+            <form onsubmit="submitReview(event)">
+              <label>Meal
+                <select id="r-meal" required>
+                  <option value="">Choose...</option>
+                  <option value="Breakfast">Breakfast (Today)</option>
+                  <option value="Lunch">Lunch (Today)</option>
+                  <option value="Dinner">Dinner (Today)</option>
+                </select>
+              </label>
+              <label>Rating (1–5)
+                <select id="r-rating" required>
+                  <option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option>
+                  <option value="2">2 ★</option><option value="1">1 ★</option>
+                </select>
+              </label>
+              <label>Review (optional)<textarea id="r-text" rows="2"></textarea></label>
+              <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>My Reviews</h3>
+            <div id="my-reviews"></div>
+          </div>
+        </div>
+
+        <!-- Canteen -->
+        <div id="view-canteen" class="dash-view">
+          <h1>Canteen Information</h1>
+          <p class="muted">Demo prices · Opening: 8:00 AM – 9:00 PM · No online ordering</p>
+          <input type="search" id="can-search" placeholder="Search items..." oninput="renderCanteen()" style="margin-bottom:12px;max-width:320px" />
+          <div id="canteen-list" class="cards-grid"></div>
+        </div>
+
+        <!-- Rector -->
+        <div id="view-rector" class="dash-view">
+          <h1>Rector & Hostel Information</h1>
+          <div class="card">
+            <span class="badge badge-warn">Placeholder — Not Verified</span>
+            <h3 style="margin-top:12px">[Placeholder] Dr. Ramesh Kumar</h3>
+            <p>📧 rector.hostel@college.edu.in</p>
+            <p>📞 +91-XXXXXXXXXX</p>
+            <p>🕐 Mon–Fri 10:00 AM – 5:00 PM</p>
+            <p>📍 Hostel Administrative Block, Ground Floor</p>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h3>Hostel Rules</h3>
+            <ol>
+              <li>Return by 10:00 PM weekdays, 11:00 PM weekends.</li>
+              <li>Visitors only in common areas during designated hours.</li>
+              <li>Keep rooms and common areas clean.</li>
+              <li>No cooking in rooms.</li>
+              <li>Ragging is strictly prohibited.</li>
+              <li>Maintain silence after 11:00 PM.</li>
+            </ol>
+          </div>
+          <div class="card card-warn" style="margin-top:16px">
+            <strong>⚠ Emergency Guidance</strong>
+            <p>This website does NOT replace official emergency procedures. For medical or security emergencies contact campus security immediately.</p>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="view-notifications" class="dash-view">
+          <h1>Notifications</h1>
+          <button class="btn btn-outline btn-sm" onclick="markAllRead()">Mark all read</button>
+          <div id="notif-list" class="card" style="margin-top:12px"></div>
+        </div>
+
+        <!-- Profile -->
+        <div id="view-profile" class="dash-view">
+          <h1>My Profile</h1>
+          <div class="card" id="profile-card" style="max-width:400px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ADMIN DASHBOARD ========== -->
+  <div id="page-admin" class="page dashboard-page">
+    <aside class="sidebar" id="admin-sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-icon">🏠</span> HostelHub
+        <span class="demo-badge">ADMIN</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="side-link active" onclick="showAdminView('a-overview', this)">📊 Overview</a>
+        <a href="#" class="side-link" onclick="showAdminView('a-complaints', this)">📋 Complaints</a>
+        <a href="#" class="side-link" onclick="showAdminView('a-mess', this)">🍽️ Mess Menu</a>
+        <a href="#" class="side-link" onclick="showAdminView('a-canteen', this)">🏪 Canteen</a>
+        <a href="#" class="side-link" onclick="showAdminView('a-users', this)">👥 Users</a>
+      </nav>
+      <div class="sidebar-user">
+        <div id="admin-user-name">Admin</div>
+        <button class="btn btn-danger btn-sm btn-block" onclick="handleLogout()">Logout</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <header class="dash-top">
+        <button class="btn btn-ghost sidebar-open" onclick="document.getElementById('admin-sidebar').classList.toggle('open')">☰</button>
+        <span>Admin Dashboard</span>
+      </header>
+      <div class="dash-content">
+        <div id="view-a-overview" class="dash-view active">
+          <h1>Admin Overview</h1>
+          <div class="stats-row" id="admin-stats"></div>
+          <div class="card" style="margin-top:16px">
+            <h3>All Complaints</h3>
+            <div id="admin-complaints-table" class="table-wrap"></div>
+          </div>
+        </div>
+        <div id="view-a-complaints" class="dash-view">
+          <h1>Manage Complaints</h1>
+          <div id="admin-manage" class="table-wrap card"></div>
+          <div id="admin-edit-panel" class="card" style="margin-top:16px;display:none;max-width:480px">
+            <h3 id="edit-title">Update Complaint</h3>
+            <label>Status
+              <select id="edit-status">
+                <option>Received</option><option>Assigned</option><option>In Progress</option><option>Resolved</option><option>Cancelled</option>
+              </select>
+            </label>
+            <label>Assign To<input type="text" id="edit-assign" placeholder="Staff name" /></label>
+            <label>Resolution Notes<textarea id="edit-notes" rows="2"></textarea></label>
+            <button class="btn btn-primary" onclick="saveComplaintStatus()">Update Status</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('admin-edit-panel').style.display='none'">Cancel</button>
+          </div>
+        </div>
+        <div id="view-a-mess" class="dash-view">
+          <h1>Manage Mess Menu</h1>
+          <p class="muted">Demo menus are stored in localStorage. Students see published menus.</p>
+          <div id="admin-mess-list" class="cards-grid"></div>
+        </div>
+        <div id="view-a-canteen" class="dash-view">
+          <h1>Manage Canteen</h1>
+          <div id="admin-canteen-list" class="table-wrap card"></div>
+        </div>
+        <div id="view-a-users" class="dash-view">
+          <h1>Users</h1>
+          <div id="admin-users" class="table-wrap card"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+/* HostelHub – Demo app with localStorage */
+
+const KEYS = {
+  user: 'hh_user',
+  complaints: 'hh_complaints',
+  reviews: 'hh_reviews',
+  notifs: 'hh_notifs',
+  counter: 'hh_counter',
+};
+
+const DEMO_STUDENT = {
+  id: 'student-1',
+  email: 'student@demo.hostelhub',
+  full_name: 'Aarav Patel',
+  hostel_block: 'Block A',
+  room_number: '204',
+  enrollment_number: 'CE2024-1042',
+  role: 'student',
+};
+
+const DEMO_ADMIN = {
+  id: 'admin-1',
+  email: 'admin@demo.hostelhub',
+  full_name: 'Priya Sharma',
+  hostel_block: 'Admin',
+  room_number: 'N/A',
+  enrollment_number: 'ADMIN-001',
+  role: 'admin',
+};
+
+const DEMO_PASS = 'demo1234';
+
+const SAMPLE_COMPLAINTS = [
+  {
+    id: 'c1', complaint_id: 'HH-CMP-1001', user_id: 'student-1',
+    category: 'Washroom', hostel_block: 'Block A', location: 'Floor 2 Common Washroom',
+    room_or_area: '2nd Floor', description: 'Water leakage from ceiling and broken tap.',
+    priority: 'High', status: 'In Progress', assigned_to: 'Maintenance Staff',
+    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'c2', complaint_id: 'HH-CMP-1002', user_id: 'student-1',
+    category: 'Drinking Water', hostel_block: 'Block A', location: 'Near Room 204',
+    room_or_area: '204', description: 'Water cooler not working.',
+    priority: 'Urgent', status: 'Assigned', assigned_to: 'Plumbing Team',
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 43200000).toISOString(),
+  },
+  {
+    id: 'c3', complaint_id: 'HH-CMP-1003', user_id: 'student-1',
+    category: 'Corridor', hostel_block: 'Block A', location: 'Main Corridor Floor 2',
+    room_or_area: 'Corridor', description: 'Lights not working in corridor.',
+    priority: 'Normal', status: 'Resolved', resolution_notes: 'Replaced bulbs.',
+    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+  },
+];
+
+const MENUS = [
+  { type: 'Breakfast', time: '07:30 AM – 09:00 AM', items: ['Poha', 'Bread Butter', 'Tea / Coffee', 'Boiled Eggs'] },
+  { type: 'Lunch', time: '12:30 PM – 02:00 PM', items: ['Roti', 'Dal Tadka', 'Paneer Butter Masala', 'Jeera Rice', 'Salad & Curd'] },
+  { type: 'Dinner', time: '07:30 PM – 09:00 PM', items: ['Chapati', 'Mix Veg', 'Dal Fry', 'Rice', 'Sweet (Halwa)'] },
+];
+
+const CANTEEN = [
+  { name: 'Veg Sandwich', cat: 'Snacks', price: 40, avail: true, desc: 'Fresh vegetables with green chutney' },
+  { name: 'Masala Dosa', cat: 'South Indian', price: 60, avail: true, desc: 'Crispy dosa with potato filling' },
+  { name: 'Cold Coffee', cat: 'Beverages', price: 50, avail: true, desc: 'Chilled coffee with ice cream' },
+  { name: 'Samosa (2 pcs)', cat: 'Snacks', price: 30, avail: true, desc: 'Crispy fried samosas with chutney' },
+  { name: 'Maggi', cat: 'Snacks', price: 35, avail: false, desc: 'Classic masala Maggi noodles' },
+  { name: 'Fruit Juice', cat: 'Beverages', price: 45, avail: true, desc: 'Fresh seasonal fruit juice' },
+  { name: 'Pav Bhaji', cat: 'Main Course', price: 70, avail: true, desc: 'Spicy vegetable bhaji with butter pav' },
+  { name: 'Ice Cream Cup', cat: 'Desserts', price: 40, avail: true, desc: 'Vanilla / Chocolate / Strawberry' },
+];
+
+const ANNOUNCEMENTS = [
+  { title: 'Water Supply Maintenance', content: 'Block A water interrupted Saturday 10 AM – 2 PM for tank cleaning.' },
+  { title: 'Mess Menu Change – Sunday', content: 'Special Sunday lunch: Paneer special + Gulab Jamun.' },
+];
+
+// ---------- Storage helpers ----------
+function load(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function save(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function initData() {
+  if (!localStorage.getItem(KEYS.complaints)) save(KEYS.complaints, SAMPLE_COMPLAINTS);
+  if (!localStorage.getItem(KEYS.counter)) localStorage.setItem(KEYS.counter, '1003');
+  if (!localStorage.getItem(KEYS.reviews)) save(KEYS.reviews, []);
+  if (!localStorage.getItem(KEYS.notifs)) {
+    save(KEYS.notifs, [
+      { id: 'n1', user_id: 'student-1', title: 'Complaint Status Updated', message: 'HH-CMP-1001 is now In Progress.', read: false, at: new Date(Date.now() - 86400000).toISOString() },
+      { id: 'n2', user_id: 'student-1', title: 'Mess Menu Updated', message: "Today's lunch menu has been published.", read: true, at: new Date(Date.now() - 18000000).toISOString() },
+    ]);
+  }
+}
+
+// ---------- UI helpers ----------
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || '');
+  setTimeout(() => { el.className = 'toast'; }, 3500);
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  window.scrollTo(0, 0);
+
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'admin') renderAdmin();
+}
+
+function statusBadge(s) {
+  const map = {
+    Received: 'badge-received',
+    Assigned: 'badge-assigned',
+    'In Progress': 'badge-progress',
+    Resolved: 'badge-resolved',
+    Cancelled: 'badge-cancelled',
+  };
+  return `<span class="badge ${map[s] || ''}">${s}</span>`;
+}
+
+function priorityBadge(p) {
+  const map = { Normal: 'badge-normal', High: 'badge-high', Urgent: 'badge-urgent' };
+  return `<span class="badge ${map[p] || ''}">${p}</span>`;
+}
+
+function getUser() {
+  return load(KEYS.user, null);
+}
+
+// ---------- Auth ----------
+function fillDemo(role) {
+  if (role === 'student') {
+    document.getElementById('login-email').value = DEMO_STUDENT.email;
+    document.getElementById('login-password').value = DEMO_PASS;
+  } else {
+    document.getElementById('login-email').value = DEMO_ADMIN.email;
+    document.getElementById('login-password').value = DEMO_PASS;
+  }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-password').value;
+  if (pass !== DEMO_PASS) {
+    toast('Invalid password. Use demo1234', 'error');
+    return;
+  }
+  let user = null;
+  if (email === DEMO_STUDENT.email) user = DEMO_STUDENT;
+  else if (email === DEMO_ADMIN.email) user = DEMO_ADMIN;
+  else {
+    toast('Unknown email. Use demo accounts or sign up.', 'error');
+    return;
+  }
+  save(KEYS.user, user);
+  toast('Login successful!', 'success');
+  showPage(user.role === 'admin' ? 'admin' : 'dashboard');
+}
+
+function handleSignup(e) {
+  e.preventDefault();
+  const name = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const confirm = document.getElementById('su-confirm').value;
+  const block = document.getElementById('su-block').value;
+  const room = document.getElementById('su-room').value.trim();
+  const enroll = document.getElementById('su-enroll').value.trim();
+
+  if (pass !== confirm) {
+    toast('Passwords do not match', 'error');
+    return;
+  }
+  if (pass.length < 6) {
+    toast('Password min 6 characters', 'error');
+    return;
+  }
+  // Demo signup always creates student (password not stored in this simple demo)
+  const user = {
+    id: 'user-' + Date.now(),
+    email,
+    full_name: name,
+    hostel_block: block,
+    room_number: room,
+    enrollment_number: enroll,
+    role: 'student',
+  };
+  save(KEYS.user, user);
+  toast('Account created!', 'success');
+  showPage('dashboard');
+}
+
+function handleLogout() {
+  if (!confirm('Logout?')) return;
+  localStorage.removeItem(KEYS.user);
+  toast('Logged out');
+  showPage('landing');
+}
+
+// ---------- Dashboard views ----------
+function showDashView(view, linkEl) {
+  document.querySelectorAll('#page-dashboard .dash-view').forEach((v) => v.classList.remove('active'));
+  const el = document.getElementById('view-' + view);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('#page-dashboard .side-link').forEach((a) => a.classList.remove('active'));
+  if (linkEl) linkEl.classList.add('active');
+  document.getElementById('dash-title').textContent =
+    { overview: 'Overview', cleanliness: 'Cleanliness', complaints: 'My Complaints', mess: 'Mess Menu',
+      reviews: 'Food Reviews', canteen: 'Canteen', rector: 'Rector & Info', notifications: 'Notifications', profile: 'My Profile' }[view] || view;
+
+  if (view === 'overview') renderOverview();
+  if (view === 'complaints') renderComplaints();
+  if (view === 'mess') renderMess();
+  if (view === 'reviews') renderReviews();
+  if (view === 'canteen') renderCanteen();
+  if (view === 'notifications') renderNotifs();
+  if (view === 'profile') renderProfile();
+
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderDashboard() {
+  const user = getUser();
+  if (!user || user.role === 'admin') {
+    showPage(user?.role === 'admin' ? 'admin' : 'login');
+    return;
+  }
+  document.getElementById('dash-user-name').textContent = user.full_name;
+  document.getElementById('dash-user-email').textContent = user.email;
+  showDashView('overview', document.querySelector('#page-dashboard .side-link'));
+}
+
+function renderOverview() {
+  const user = getUser();
+  const all = load(KEYS.complaints, []).filter((c) => c.user_id === user.id);
+  const pending = all.filter((c) => ['Received', 'Assigned', 'In Progress'].includes(c.status)).length;
+  const resolved = all.filter((c) => c.status === 'Resolved').length;
+  const reviews = load(KEYS.reviews, []).filter((r) => r.user_id === user.id);
+  const avg = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
+
+  document.getElementById('welcome-msg').textContent = `Welcome back, ${user.full_name.split(' ')[0]}!`;
+  document.getElementById('welcome-sub').textContent = `${user.hostel_block} · Room ${user.room_number} · ${user.enrollment_number}`;
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="icon" style="background:#dbeafe">📋</div><div><b>${all.length}</b><span>Total Complaints</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#fef3c7">⏳</div><div><b>${pending}</b><span>Pending</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#d1fae5">✅</div><div><b>${resolved}</b><span>Resolved</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#cffafe">⭐</div><div><b>${avg}</b><span>Meal Rating</span></div></div>
+  `;
+
+  document.getElementById('today-menu').innerHTML = MENUS.map((m) =>
+    `<div style="margin-bottom:12px"><strong>${m.type}</strong> <span class="tiny muted">${m.time}</span><br/><span class="tiny">${m.items.join(' · ')}</span></div>`
+  ).join('');
+
+  document.getElementById('announcements-list').innerHTML = ANNOUNCEMENTS.map((a) =>
+    `<div style="border-left:3px solid var(--blue);padding-left:10px;margin-bottom:10px"><strong class="tiny">${a.title}</strong><p class="tiny muted">${a.content}</p></div>`
+  ).join('');
+
+  const recent = all.slice(0, 5);
+  if (!recent.length) {
+    document.getElementById('recent-complaints').innerHTML = '<p class="muted">No complaints yet.</p>';
+  } else {
+    document.getElementById('recent-complaints').innerHTML = `
+      <table><thead><tr><th>ID</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${recent.map((c) => `
+        <tr>
+          <td><a href="#" onclick="openComplaint('${c.id}');return false">${c.complaint_id}</a></td>
+          <td>${c.category}</td>
+          <td>${priorityBadge(c.priority)}</td>
+          <td>${statusBadge(c.status)}</td>
+          <td class="tiny">${new Date(c.created_at).toLocaleDateString()}</td>
+        </tr>`).join('')}
+      </tbody></table>`;
+  }
+}
+
+// ---------- Complaints ----------
+function submitComplaint(e) {
+  e.preventDefault();
+  const user = getUser();
+  let counter = parseInt(localStorage.getItem(KEYS.counter) || '1003', 10) + 1;
+  localStorage.setItem(KEYS.counter, String(counter));
+
+  const c = {
+    id: 'c-' + Date.now(),
+    complaint_id: 'HH-CMP-' + counter,
+    user_id: user.id,
+    category: document.getElementById('c-cat').value,
+    hostel_block: document.getElementById('c-block').value,
+    location: document.getElementById('c-loc').value.trim(),
+    room_or_area: document.getElementById('c-room').value.trim(),
+    description: document.getElementById('c-desc').value.trim(),
+    priority: document.getElementById('c-pri').value,
+    status: 'Received',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const list = load(KEYS.complaints, []);
+  list.unshift(c);
+  save(KEYS.complaints, list);
+
+  const notifs = load(KEYS.notifs, []);
+  notifs.unshift({
+    id: 'n-' + Date.now(),
+    user_id: user.id,
+    title: 'Complaint Received',
+    message: `Your complaint ${c.complaint_id} has been registered.`,
+    read: false,
+    at: new Date().toISOString(),
+  });
+  save(KEYS.notifs, notifs);
+
+  toast(`Complaint ${c.complaint_id} submitted!`, 'success');
+  e.target.reset();
+  openComplaint(c.id);
+}
+
+function renderComplaints() {
+  const user = getUser();
+  let list = load(KEYS.complaints, []).filter((c) => c.user_id === user.id);
+  const q = (document.getElementById('c-search')?.value || '').toLowerCase();
+  const st = document.getElementById('c-filter-status')?.value || '';
+  if (q) list = list.filter((c) => c.complaint_id.toLowerCase().includes(q) || c.category.toLowerCase().includes(q) || c.location.toLowerCase().includes(q));
+  if (st) list = list.filter((c) => c.status === st);
+
+  if (!list.length) {
+    document.getElementById('complaints-table').innerHTML = '<p class="muted" style="padding:24px;text-align:center">No complaints found.</p>';
+    return;
+  }
+  document.getElementById('complaints-table').innerHTML = `
+    <table><thead><tr><th>ID</th><th>Category</th><th>Location</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>${list.map((c) => `
+      <tr>
+        <td><strong>${c.complaint_id}</strong></td>
+        <td>${c.category}</td>
+        <td class="tiny">${c.location}</td>
+        <td>${priorityBadge(c.priority)}</td>
+        <td>${statusBadge(c.status)}</td>
+        <td class="tiny">${new Date(c.created_at).toLocaleDateString()}</td>
+        <td><a href="#" onclick="openComplaint('${c.id}');return false">View</a></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function openComplaint(id) {
+  const c = load(KEYS.complaints, []).find((x) => x.id === id);
+  if (!c) return;
+  showDashView('complaint-detail');
+  const flow = ['Received', 'Assigned', 'In Progress', 'Resolved'];
+  const idx = flow.indexOf(c.status);
+
+  document.getElementById('complaint-detail-body').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;margin:16px 0">
+      <div>
+        <h1>${c.complaint_id}</h1>
+        <p class="muted tiny">Submitted ${new Date(c.created_at).toLocaleString()}</p>
+      </div>
+      <div>${priorityBadge(c.priority)} ${statusBadge(c.status)}</div>
+    </div>
+    <div class="card">
+      <h3>Progress Timeline</h3>
+      <div class="timeline">
+        ${flow.map((s, i) => `
+          <div class="tl-step">
+            <div class="tl-dot ${idx >= i || c.status === s ? 'done' : ''}">${i + 1}</div>
+            <div class="tl-label">${s}</div>
+          </div>`).join('')}
+      </div>
+      ${c.status === 'Cancelled' ? '<p class="muted" style="text-align:center">This complaint was cancelled.</p>' : ''}
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Details</h3>
+      <p><strong>Category:</strong> ${c.category}</p>
+      <p><strong>Block:</strong> ${c.hostel_block} · <strong>Area:</strong> ${c.room_or_area}</p>
+      <p><strong>Location:</strong> ${c.location}</p>
+      <p><strong>Description:</strong> ${c.description}</p>
+      ${c.assigned_to ? `<p><strong>Assigned to:</strong> ${c.assigned_to}</p>` : ''}
+      ${c.resolution_notes ? `<p><strong>Resolution:</strong> ${c.resolution_notes}</p>` : ''}
+    </div>
+    ${c.priority === 'Urgent' && c.status !== 'Resolved' ? `
+      <div class="card card-warn" style="margin-top:16px">
+        <strong>⚠ Urgent</strong>
+        <p class="tiny">This website does not replace official emergency procedures. Contact campus security for immediate help.</p>
+      </div>` : ''}
+  `;
+}
+
+// Priority urgent note toggle
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'c-pri') {
+    document.getElementById('urgent-note').style.display = e.target.value === 'Urgent' ? 'block' : 'none';
+  }
+});
+
+// ---------- Mess / Reviews / Canteen ----------
+function renderMess() {
+  document.getElementById('mess-list').innerHTML = MENUS.map((m) => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between"><h3>${m.type}</h3><span class="badge badge-warn">Demo</span></div>
+      <p class="tiny muted">${m.time}</p>
+      <ul style="margin-top:10px;padding-left:18px;font-size:0.9rem">
+        ${m.items.map((i) => `<li>${i}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+function submitReview(e) {
+  e.preventDefault();
+  const user = getUser();
+  const meal = document.getElementById('r-meal').value;
+  const rating = parseInt(document.getElementById('r-rating').value, 10);
+  const text = document.getElementById('r-text').value.trim();
+  const list = load(KEYS.reviews, []);
+  if (list.some((r) => r.user_id === user.id && r.meal === meal)) {
+    toast('You already reviewed this meal', 'error');
+    return;
+  }
+  list.unshift({
+    id: 'r-' + Date.now(),
+    user_id: user.id,
+    user_name: user.full_name,
+    meal,
+    rating,
+    text,
+    at: new Date().toISOString(),
+  });
+  save(KEYS.reviews, list);
+  toast('Review submitted (demo)', 'success');
+  e.target.reset();
+  renderReviews();
+}
+
+function renderReviews() {
+  const user = getUser();
+  const mine = load(KEYS.reviews, []).filter((r) => r.user_id === user.id);
+  document.getElementById('my-reviews').innerHTML = mine.length
+    ? mine.map((r) => `<div style="border-bottom:1px solid var(--border);padding:10px 0"><strong>${r.meal}</strong> · ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}<br/><span class="tiny muted">${r.text || '—'}</span></div>`).join('')
+    : '<p class="muted">No reviews yet.</p>';
+}
+
+function renderCanteen() {
+  const q = (document.getElementById('can-search')?.value || '').toLowerCase();
+  let items = CANTEEN;
+  if (q) items = items.filter((i) => i.name.toLowerCase().includes(q) || i.cat.toLowerCase().includes(q));
+  document.getElementById('canteen-list').innerHTML = items.map((i) => `
+    <div class="card" style="${i.avail ? '' : 'opacity:0.7'}">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div><h3>${i.name}</h3><span class="tiny muted">${i.cat}</span></div>
+        <div style="text-align:right"><strong style="color:var(--blue)">₹${i.price}</strong><br/><span class="badge badge-warn">Demo</span></div>
+      </div>
+      <p class="tiny muted" style="margin:8px 0">${i.desc}</p>
+      <span class="badge ${i.avail ? 'badge-ok' : 'badge-no'}">${i.avail ? 'Available' : 'Unavailable'}</span>
+    </div>
+  `).join('') || '<p class="muted">No items found.</p>';
+}
+
+function renderNotifs() {
+  const user = getUser();
+  const list = load(KEYS.notifs, []).filter((n) => n.user_id === user.id);
+  document.getElementById('notif-list').innerHTML = list.length
+    ? list.map((n) => `
+      <div style="padding:12px;border-bottom:1px solid var(--border);${!n.read ? 'background:#eff6ff' : ''}">
+        <strong>${n.title}</strong>
+        <p class="tiny muted">${n.message}</p>
+        <span class="tiny muted">${new Date(n.at).toLocaleString()}</span>
+      </div>`).join('')
+    : '<p class="muted" style="padding:20px">No notifications.</p>';
+}
+
+function markAllRead() {
+  const user = getUser();
+  const list = load(KEYS.notifs, []);
+  list.forEach((n) => { if (n.user_id === user.id) n.read = true; });
+  save(KEYS.notifs, list);
+  renderNotifs();
+  toast('All marked as read', 'success');
+}
+
+function renderProfile() {
+  const u = getUser();
+  document.getElementById('profile-card').innerHTML = `
+    <p><strong>${u.full_name}</strong></p>
+    <p class="muted">${u.email}</p>
+    <p class="tiny" style="margin-top:12px"><span class="badge badge-assigned">${u.role}</span></p>
+    <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)" />
+    <p><strong>Block:</strong> ${u.hostel_block}</p>
+    <p><strong>Room:</strong> ${u.room_number}</p>
+    <p><strong>Enrollment:</strong> ${u.enrollment_number}</p>
+  `;
+}
+
+// ---------- Admin ----------
+function showAdminView(view, linkEl) {
+  document.querySelectorAll('#page-admin .dash-view').forEach((v) => v.classList.remove('active'));
+  document.getElementById('view-' + view)?.classList.add('active');
+  document.querySelectorAll('#page-admin .side-link').forEach((a) => a.classList.remove('active'));
+  if (linkEl) linkEl.classList.add('active');
+  document.getElementById('admin-sidebar').classList.remove('open');
+
+  if (view === 'a-overview') renderAdminOverview();
+  if (view === 'a-complaints') renderAdminComplaints();
+  if (view === 'a-mess') {
+    document.getElementById('admin-mess-list').innerHTML = MENUS.map((m) =>
+      `<div class="card"><h3>${m.type}</h3><p class="tiny muted">${m.time}</p><p class="tiny">${m.items.join(', ')}</p><span class="badge badge-ok">Published</span></div>`
+    ).join('');
+  }
+  if (view === 'a-canteen') {
+    document.getElementById('admin-canteen-list').innerHTML = `
+      <table><thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Status</th></tr></thead>
+      <tbody>${CANTEEN.map((i) => `<tr><td>${i.name}</td><td>${i.cat}</td><td>₹${i.price}</td><td>${i.avail ? statusBadge('Resolved').replace('Resolved','Available') : '<span class="badge badge-no">Unavailable</span>'}</td></tr>`).join('')}</tbody></table>`;
+  }
+  if (view === 'a-users') {
+    document.getElementById('admin-users').innerHTML = `
+      <table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td>${DEMO_STUDENT.full_name}</td><td>${DEMO_STUDENT.email}</td><td>student</td></tr>
+        <tr><td>${DEMO_ADMIN.full_name}</td><td>${DEMO_ADMIN.email}</td><td>admin</td></tr>
+      </tbody></table>`;
+  }
+}
+
+function renderAdmin() {
+  const user = getUser();
+  if (!user || user.role !== 'admin') {
+    showPage('login');
+    return;
+  }
+  document.getElementById('admin-user-name').textContent = user.full_name;
+  showAdminView('a-overview', document.querySelector('#page-admin .side-link'));
+}
+
+function renderAdminOverview() {
+  const all = load(KEYS.complaints, []);
+  const received = all.filter((c) => c.status === 'Received').length;
+  const progress = all.filter((c) => ['Assigned', 'In Progress'].includes(c.status)).length;
+  const resolved = all.filter((c) => c.status === 'Resolved').length;
+
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-card"><div class="icon" style="background:#dbeafe">📋</div><div><b>${all.length}</b><span>Total</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#f1f5f9">📥</div><div><b>${received}</b><span>Received</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#fef3c7">🔄</div><div><b>${progress}</b><span>In Progress</span></div></div>
+    <div class="stat-card"><div class="icon" style="background:#d1fae5">✅</div><div><b>${resolved}</b><span>Resolved</span></div></div>
+  `;
+
+  document.getElementById('admin-complaints-table').innerHTML = `
+    <table><thead><tr><th>ID</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>${all.map((c) => `
+      <tr>
+        <td>${c.complaint_id}</td><td>${c.category}</td>
+        <td>${priorityBadge(c.priority)}</td><td>${statusBadge(c.status)}</td>
+        <td class="tiny">${new Date(c.created_at).toLocaleDateString()}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+let editingId = null;
+
+function renderAdminComplaints() {
+  const all = load(KEYS.complaints, []);
+  document.getElementById('admin-manage').innerHTML = `
+    <table><thead><tr><th>ID</th><th>Category</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>${all.map((c) => `
+      <tr>
+        <td>${c.complaint_id}</td><td>${c.category}</td><td>${statusBadge(c.status)}</td>
+        <td><button class="btn btn-sm btn-outline" onclick="editComplaint('${c.id}')">Manage</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function editComplaint(id) {
+  const c = load(KEYS.complaints, []).find((x) => x.id === id);
+  if (!c) return;
+  editingId = id;
+  document.getElementById('admin-edit-panel').style.display = 'block';
+  document.getElementById('edit-title').textContent = 'Update ' + c.complaint_id;
+  document.getElementById('edit-status').value = c.status;
+  document.getElementById('edit-assign').value = c.assigned_to || '';
+  document.getElementById('edit-notes').value = c.resolution_notes || '';
+}
+
+function saveComplaintStatus() {
+  if (!editingId) return;
+  const list = load(KEYS.complaints, []);
+  const idx = list.findIndex((c) => c.id === editingId);
+  if (idx < 0) return;
+  const status = document.getElementById('edit-status').value;
+  list[idx].status = status;
+  list[idx].assigned_to = document.getElementById('edit-assign').value.trim() || list[idx].assigned_to;
+  list[idx].resolution_notes = document.getElementById('edit-notes').value.trim() || list[idx].resolution_notes;
+  list[idx].updated_at = new Date().toISOString();
+  save(KEYS.complaints, list);
+
+  const notifs = load(KEYS.notifs, []);
+  notifs.unshift({
+    id: 'n-' + Date.now(),
+    user_id: list[idx].user_id,
+    title: 'Complaint Status Updated',
+    message: `${list[idx].complaint_id} is now ${status}.`,
+    read: false,
+    at: new Date().toISOString(),
+  });
+  save(KEYS.notifs, notifs);
+
+  toast('Complaint updated', 'success');
+  document.getElementById('admin-edit-panel').style.display = 'none';
+  editingId = null;
+  renderAdminComplaints();
+  renderAdminOverview();
+}
+
+// ---------- Boot ----------
+initData();
+
+// Auto-login if session exists
+(function () {
+  const user = getUser();
+  if (user) {
+    showPage(user.role === 'admin' ? 'admin' : 'dashboard');
+  } else {
+    showPage('landing');
+  }
+})();
+
+  </script>
+</body>
+</html>
